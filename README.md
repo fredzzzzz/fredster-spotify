@@ -1,0 +1,2 @@
+# fredster-spotify
+Spotify application.
