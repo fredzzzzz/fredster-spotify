@@ -1,5 +1,11 @@
 {
   "dependencies": {
-    "request": "^2.88.2"
+    "@yujinakayama/apple-music": "^0.4.1",
+    "async": "^3.2.4",
+    "dotenv": "^16.0.1",
+    "fs": "^0.0.1-security",
+    "request": "^2.88.2",
+    "spotify-web-api-node": "^5.0.2",
+    "sqlite3": "^5.0.11"
   }
 }
