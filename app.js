@@ -1,7 +1,9 @@
-const SpotifyWebApi = require("spotify-web-api-node");
+const SpotifyWepApi = require("spotify-web-api-node");
 
-class fredster {
+class fredster extends SpotifyWepApi {
     constructor() {
+        super();
+        
         this.dotenv = require("dotenv").config();
         this.sqlite = require("sqlite3");
         this.fs = require("fs");
@@ -9,14 +11,23 @@ class fredster {
         this.express = require("express");
         this.app = this.express();
         this.querystring = require("querystring");
-        this.spotify = new SpotifyWebApi({
-            redirectUri: process.env.REDIRECT_URI,
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-        });
 
         this.utils = new Map();
         this.timers = new Map();
+        this.name = "fredster";
+    }
+
+    async setupCreds() {
+        return new Promise((resolve) => {
+            this.setAccessToken('tbd');
+            this.setRefreshToken('tbd');
+            this.setRedirectURI(process.env.REDIRECT_URI);
+            this.setClientId(process.env.CLIENT_ID);
+            this.setClientSecret(process.env.CLIENT_SECRET);
+
+            console.log("Setup credentials for fredster");
+            resolve();
+        });
     }
 
     async loadUtils() {
@@ -79,53 +90,50 @@ class fredster {
                         redirect_uri: process.env.REDIRECT_URI
                     });
 
-                console.log(process.env.REDIRECT_URI);
                 res.redirect(redirect_link);             
             });
 
-            this.app.get("/callback", (req, res) => {
+            this.app.get("/callback", async(req, res) => {
                 res.send("time2steal all ur data lol");
-                
-                let accessToken, refreshToken;
+            
                 let code = req.query.code || null;
                 if (!code) return console.error("Auth code not retrieved.");
                 // from https://github.com/thelinmichael/spotify-web-api-node#usage
-                this.spotify.authorizationCodeGrant(code).then(
-                    function(data) {
-                        console.log('The token expires in ' + data.body['expires_in']);
-                        console.log('The access token is ' + data.body['access_token']);
-                        console.log('The refresh token is ' + data.body['refresh_token']);
-                    
-                        accessToken = data.body['access_token'];
-                        refreshToken = data.body['refresh_token'];
-                    },
-                    function(err) {
-                      console.log('Something went wrong!', err);
-                    }
-                  );        
+                  let data = await this.authorizationCodeGrant(code);
+                  let expiry = data.body['expires_in'];
+                  let accessToken = data.body['access_token'];
+                  let refreshToken = data.body['refresh_token'];
 
-                  this.spotify.setAccessToken(accessToken);
-                  this.spotify.setRefreshToken(refreshToken);    
-                  
-                  // CALL TIMER TO REFRESH TOKEN EVERY 3500 SECONDS
+                  // not needed log, testing only
+                  console.log('The token expires in ' + expiry);
+                  console.log('The access token is ' + accessToken);
+                  console.log('The refresh token is ' + refreshToken);
+
+                  this.setAccessToken(accessToken);
+                  this.setRefreshToken(refreshToken);
+                  resolve();
             });
 
             this.app.listen(8888, () => {
                 console.log("Listening on 8888.");
             });
-
-            resolve();
         });
     }
 
+    // testing only
+    sayHi() {
+        return "Hello!";
+    }
+
     async start() {
-        //this.setupURI();
-        this.authorise();
+        await this.setupCreds();
         await this.loadUtils();
         await this.loadTimers();
         await this.loadDatabase();
+        await this.authorise();
 
-        //this.setupURI();
+        // IF MORE TIMERS then run according to <export>.time (s)
+        setInterval(this.refreshToken, 300 * 100, this)
 
         console.log("Startup complete");
     }
