@@ -136,6 +136,7 @@ class fredster extends SpotifyWepApi {
         setInterval(this.refreshToken, 300 * 100, this)
 
         console.log("Startup complete");
+        this.addPlaylist(this);
     }
 }
 

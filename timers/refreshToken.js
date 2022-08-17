@@ -1,11 +1,14 @@
 exports.time = 300 * 100;
 
 function refreshToken(fredster) {
+
+    /* testing only
     let c_refreshToken = fredster.getRefreshToken();
     let c_accessToken = fredster.getAccessToken();
-    console.log("Reading refresh token as: " + c_refreshToken);
-    console.log("Reading access token as: " + c_accessToken);
 
+    console.log("Reading refresh token as: " + c_refreshToken);
+    console.log("Reading access token as: " + c_accessToken); */
+    
     // from https://github.com/thelinmichael/spotify-web-api-node#usage
     fredster.refreshAccessToken().then(
         function(data) {
