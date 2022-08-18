@@ -103,12 +103,7 @@ class fredster extends SpotifyWepApi {
                   let expiry = data.body['expires_in'];
                   let accessToken = data.body['access_token'];
                   let refreshToken = data.body['refresh_token'];
-
-                  // not needed log, testing only
-                  console.log('The token expires in ' + expiry);
-                  console.log('The access token is ' + accessToken);
-                  console.log('The refresh token is ' + refreshToken);
-
+                  
                   this.setAccessToken(accessToken);
                   this.setRefreshToken(refreshToken);
                   resolve();
@@ -136,7 +131,6 @@ class fredster extends SpotifyWepApi {
         setInterval(this.refreshToken, 300 * 100, this)
 
         console.log("Startup complete");
-        await this.addSongsToPlaylist(this);
     }
 }
 

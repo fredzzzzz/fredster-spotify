@@ -1,4 +1,4 @@
 # fredster-spotify
-Spotify application.
+Primarily with the help of https://github.com/thelinmichael/spotify-web-api-node
 
-Initial Commit :D
+
